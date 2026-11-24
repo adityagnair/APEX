@@ -1,0 +1,11 @@
+[package]
+name = "apex-templates"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+apex-core = { path = "../apex-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+

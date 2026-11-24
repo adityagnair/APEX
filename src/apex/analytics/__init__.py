@@ -1,0 +1,34 @@
+"""External anonymous usage analytics.
+
+Sends anonymized events to PostHog so the apex team can measure
+setup success, retention, feature usage, and churn — without ever
+collecting chat content, prompts, file paths, emails, IPs, or hardware
+identifiers.
+
+Distinct from :mod:`apex.telemetry`, which stores local FLOPs and
+energy metrics in a SQLite DB and never leaves the machine.
+
+Disable: set ``[analytics] enabled = false`` in ``~/.apex/config.toml``.
+"""
+
+from apex.analytics.aggregator import SessionAggregator
+from apex.analytics.bridge import EventBridge
+from apex.analytics.client import AnalyticsClient
+from apex.analytics.identity import (
+    get_or_create_anon_id,
+    is_analytics_enabled,
+    reset_anon_id,
+)
+from apex.analytics.redaction import hash_id, redact
+
+__all__ = [
+    "AnalyticsClient",
+    "EventBridge",
+    "SessionAggregator",
+    "get_or_create_anon_id",
+    "is_analytics_enabled",
+    "reset_anon_id",
+    "redact",
+    "hash_id",
+]
+

@@ -1,0 +1,11 @@
+[package]
+name = "apex-a2a"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+apex-core = { path = "../apex-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+

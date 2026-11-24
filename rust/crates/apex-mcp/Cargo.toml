@@ -1,0 +1,14 @@
+[package]
+name = "apex-mcp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+apex-core = { path = "../apex-core" }
+apex-tools = { path = "../apex-tools" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+

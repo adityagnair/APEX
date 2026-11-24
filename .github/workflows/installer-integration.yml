@@ -1,0 +1,121 @@
+name: Installer integration
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/install/**'
+      - 'src/apex/cli/**'
+      - 'tests/install/**'
+      - '.github/workflows/installer-integration.yml'
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  container-matrix:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - fedora:40
+
+    container: ${{ matrix.image }}
+
+    steps:
+      - name: Install prereqs (Ubuntu/Debian)
+        if: contains(matrix.image, 'ubuntu') || contains(matrix.image, 'debian')
+        run: |
+          apt-get update
+          apt-get install -y curl git python3 sudo
+
+      - name: Install prereqs (Fedora)
+        if: contains(matrix.image, 'fedora')
+        run: |
+          dnf install -y curl git python3 sudo
+
+      - name: Create non-root user
+        run: useradd -m -s /bin/bash testuser
+
+      - uses: actions/checkout@v7
+        with:
+          path: apex-src
+
+      - name: Install Ollama mock
+        run: install -m 755 "$GITHUB_WORKSPACE/apex-src/tests/install/bash/stubs/ollama-mock" /usr/local/bin/ollama
+
+      - name: Run installer
+        run: |
+          chown -R testuser:testuser /home/testuser "$GITHUB_WORKSPACE/apex-src"
+          su testuser -c '
+            export apex_REPO_URL=file://'"$GITHUB_WORKSPACE"'/apex-src
+            cd '"$GITHUB_WORKSPACE"'/apex-src
+            bash scripts/install/install.sh --no-bg-orchestrator
+          '
+
+      - name: Verify install state
+        run: |
+          su testuser -c '
+            test -d ~/.apex/src
+            test -d ~/.apex/.venv
+            test -f ~/.apex/config.toml
+            test -f ~/.apex/.state/install-state.json
+            test -L ~/.local/bin/APEX
+          '
+
+      - name: Verify APEX --version
+        run: su testuser -c '~/.local/bin/APEX --version'
+
+      - name: Verify APEX doctor exits 0
+        run: su testuser -c '~/.local/bin/APEX doctor'
+
+      - name: Verify uninstall is clean
+        run: |
+          su testuser -c '
+            ~/.local/bin/APEX-uninstall --yes
+            test ! -d ~/.apex
+            test ! -L ~/.local/bin/APEX
+          '
+
+  macos:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # macOS 14 runners retired on November 2, 2026. Keep coverage of
+        # both Intel and Apple Silicon on supported macOS 15 images.
+        os: [macos-15-intel, macos-15]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Ollama mock
+        run: sudo install -m 755 tests/install/bash/stubs/ollama-mock /usr/local/bin/ollama
+
+      - name: Run installer
+        run: |
+          export apex_REPO_URL=file://$(pwd)
+          bash scripts/install/install.sh --no-bg-orchestrator
+
+      - name: Verify install state
+        run: |
+          test -d ~/.apex/src
+          test -d ~/.apex/.venv
+          test -f ~/.apex/config.toml
+          test -L ~/.local/bin/APEX
+
+      - name: Verify APEX --version
+        run: ~/.local/bin/APEX --version
+
+      - name: Verify APEX doctor exits 0
+        run: ~/.local/bin/APEX doctor
+
+      - name: Verify uninstall is clean
+        run: |
+          ~/.local/bin/APEX-uninstall --yes
+          test ! -d ~/.apex
+          test ! -L ~/.local/bin/APEX
+
