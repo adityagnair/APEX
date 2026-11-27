@@ -189,7 +189,7 @@ speech = [
     "sounddevice>=0.5",
     "soundfile>=0.12",
 ]
-speech-deepgram = ["deepgram-sdk>=3.0"]
+speech-deepgram = ["deepgram-sdk>=7.19.0"]
 eval-wandb = ["wandb>=0.17"]
 eval-sheets = ["gspread>=6.0", "google-auth>=2.0"]
 mining-pearl-cpu = [
