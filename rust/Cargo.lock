@@ -18,6 +18,273 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
+name = "apex-a2a"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "apex-agents"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-engine",
+ "apex-tools",
+ "async-trait",
+ "once_cell",
+ "parking_lot",
+ "regex",
+ "rig-core",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "apex-core"
+version = "0.1.0"
+dependencies = [
+ "once_cell",
+ "parking_lot",
+ "regex",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "toml",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "apex-engine"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "async-trait",
+ "futures",
+ "once_cell",
+ "reqwest 0.12.28",
+ "rig-core",
+ "schemars",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "apex-learning"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-traces",
+ "once_cell",
+ "parking_lot",
+ "rand 0.10.3",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "apex-mcp"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-tools",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "apex-python"
+version = "0.1.0"
+dependencies = [
+ "apex-a2a",
+ "apex-agents",
+ "apex-core",
+ "apex-engine",
+ "apex-learning",
+ "apex-mcp",
+ "apex-recipes",
+ "apex-scheduler",
+ "apex-security",
+ "apex-sessions",
+ "apex-skills",
+ "apex-telemetry",
+ "apex-templates",
+ "apex-tools",
+ "apex-traces",
+ "apex-workflow",
+ "once_cell",
+ "parking_lot",
+ "pyo3",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "apex-recipes"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "apex-scheduler"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "time",
+ "uuid",
+]
+
+[[package]]
+name = "apex-security"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-engine",
+ "async-trait",
+ "futures",
+ "once_cell",
+ "parking_lot",
+ "regex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio-stream",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "apex-sessions"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "apex-skills"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "ed25519-dalek",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "apex-telemetry"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-engine",
+ "async-trait",
+ "futures",
+ "parking_lot",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "apex-templates"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "apex-tools"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "apex-engine",
+ "apex-security",
+ "meval",
+ "once_cell",
+ "parking_lot",
+ "regex",
+ "reqwest 0.12.28",
+ "rig-core",
+ "rusqlite",
+ "schemars",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "apex-traces"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "parking_lot",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tracing",
+]
+
+[[package]]
+name = "apex-workflow"
+version = "0.1.0"
+dependencies = [
+ "apex-core",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "as-any"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1064,273 +1331,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
-name = "apex-a2a"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "serde",
- "serde_json",
- "uuid",
-]
-
-[[package]]
-name = "apex-agents"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "once_cell",
- "apex-core",
- "apex-engine",
- "apex-tools",
- "parking_lot",
- "regex",
- "rig-core",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "apex-core"
-version = "0.1.0"
-dependencies = [
- "once_cell",
- "parking_lot",
- "regex",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.21",
- "toml",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "apex-engine"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "futures",
- "once_cell",
- "apex-core",
- "reqwest 0.12.28",
- "rig-core",
- "schemars",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "apex-learning"
-version = "0.1.0"
-dependencies = [
- "once_cell",
- "apex-core",
- "apex-traces",
- "parking_lot",
- "rand 0.10.3",
- "regex",
- "rusqlite",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "apex-mcp"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "apex-tools",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "apex-python"
-version = "0.1.0"
-dependencies = [
- "once_cell",
- "apex-a2a",
- "apex-agents",
- "apex-core",
- "apex-engine",
- "apex-learning",
- "apex-mcp",
- "apex-recipes",
- "apex-scheduler",
- "apex-security",
- "apex-sessions",
- "apex-skills",
- "apex-telemetry",
- "apex-templates",
- "apex-tools",
- "apex-traces",
- "apex-workflow",
- "parking_lot",
- "pyo3",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "apex-recipes"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
-name = "apex-scheduler"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "rusqlite",
- "serde",
- "serde_json",
- "time",
- "uuid",
-]
-
-[[package]]
-name = "apex-security"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "futures",
- "once_cell",
- "apex-core",
- "apex-engine",
- "parking_lot",
- "regex",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror 2.0.21",
- "tokio-stream",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "apex-sessions"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "rusqlite",
- "serde",
- "serde_json",
- "uuid",
-]
-
-[[package]]
-name = "apex-skills"
-version = "0.1.0"
-dependencies = [
- "ed25519-dalek",
- "apex-core",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
-name = "apex-telemetry"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "futures",
- "apex-core",
- "apex-engine",
- "parking_lot",
- "rusqlite",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.21",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "apex-templates"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
-name = "apex-tools"
-version = "0.1.0"
-dependencies = [
- "meval",
- "once_cell",
- "apex-core",
- "apex-engine",
- "apex-security",
- "parking_lot",
- "regex",
- "reqwest 0.12.28",
- "rig-core",
- "rusqlite",
- "schemars",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "apex-traces"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "parking_lot",
- "rusqlite",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.21",
- "tracing",
-]
-
-[[package]]
-name = "apex-workflow"
-version = "0.1.0"
-dependencies = [
- "apex-core",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
 name = "openssl-probe"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1463,9 +1463,9 @@ dependencies = [
 
 [[package]]
 name = "pyo3"
-version = "0.29.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "700d18fa267b73b9b521fd7e13580e2f446916f176cacee1ab63fcc8191f1655"
+checksum = "229ca13b8a15bb0d1487b81ab975bfcd97513416499a8312011b6036e42e0de4"
 dependencies = [
  "libc",
  "once_cell",
@@ -1477,18 +1477,18 @@ dependencies = [
 
 [[package]]
 name = "pyo3-build-config"
-version = "0.29.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b3fc0c4d08f6bb10e71fe39dfb9e2f59c6eb6854e22ec8092f50c69a4499adb"
+checksum = "70130e2b6dd1ee589a8788026a429561ca5c40fa7a2fa7914c2282eddae24700"
 dependencies = [
  "target-lexicon",
 ]
 
 [[package]]
 name = "pyo3-ffi"
-version = "0.29.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfc0b8e19df29aad7086cf977bb0c2a2f143e30567eb113e9cf72b62ca698330"
+checksum = "5e7ff73c555c286d212d4ce7e5fbda845a973c4f61bd5f160f5f2c3c2a04d1c4"
 dependencies = [
  "libc",
  "pyo3-build-config",
@@ -1496,26 +1496,26 @@ dependencies = [
 
 [[package]]
 name = "pyo3-macros"
-version = "0.29.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6100e8a4b5eba53afaa5ed078364851a0b2499c553a44c31026b929049b49dc6"
+checksum = "c46d2e5862c7bb8207e3b639f713dda3c499933444784154c11d013c5a691b60"
 dependencies = [
  "proc-macro2",
  "pyo3-macros-backend",
  "quote",
- "syn 2.0.117",
+ "syn 3.0.3",
 ]
 
 [[package]]
 name = "pyo3-macros-backend"
-version = "0.29.3"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6143877a16e82b5a727b7127ff4cd86858a24a28d745d72f43e6f227c7b1bdb3"
+checksum = "38b89f066f2ae72a2aef52d1537ca2fcd104440ebfadee06e97aa90738a25b9b"
 dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 2.0.117",
+ "syn 3.0.3",
 ]
 
 [[package]]
