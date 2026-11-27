@@ -312,7 +312,7 @@ def _make_lightweight_system(
             plain_engine = OllamaEngine(host=host) if host else OllamaEngine()
 
         # Wrap with InstrumentedEngine so agent ticks are recorded
-        # in telemetry (FLOPs, energy, cost savings).
+        # in telemetry (FLOPs, energy).
         try:
             from apex.telemetry.instrumented_engine import (
                 InstrumentedEngine,

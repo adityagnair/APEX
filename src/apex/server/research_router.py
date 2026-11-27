@@ -150,7 +150,7 @@ def _record_research_telemetry(
     peak_power_watts: float = 0.0,
     energy_method: str = "",
 ) -> None:
-    """Persist a research run into the telemetry DB so /v1/savings includes it.
+    """Persist a research run into the telemetry DB.
 
     GPU energy/power are sampled by ``_LiveGPUSampler`` during ``agent.run()``
     and passed through here. With these fields populated, the same

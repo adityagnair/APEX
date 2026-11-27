@@ -42,7 +42,7 @@ class AnalyticsIdentity(BaseModel):
 
 
 class AnalyticsPreference(BaseModel):
-    """Only the analytics choice belongs here; contest details go elsewhere."""
+    """Only the analytics choice belongs here."""
 
     model_config = ConfigDict(extra="forbid")
     enabled: StrictBool

@@ -65,7 +65,6 @@ function StatCard({
 }
 
 export function EnergyDashboard() {
-  const savings = useAppStore((s) => s.savings);
   const [energy, setEnergy] = useState<EnergyData | null>(null);
   const [telemetry, setTelemetry] = useState<TelemetryStats | null>(null);
   const [chartData, setChartData] = useState<ChartPoint[]>([]);
@@ -154,7 +153,7 @@ export function EnergyDashboard() {
         <StatCard
           icon={Hash}
           label="Total Requests"
-          value={String(savings?.total_calls ?? telemetry?.total_requests ?? 0)}
+          value={String(telemetry?.total_requests ?? 0)}
         />
         <StatCard
           icon={Gauge}
@@ -164,7 +163,7 @@ export function EnergyDashboard() {
         <StatCard
           icon={Hash}
           label="Tokens Processed"
-          value={formatNumber(savings?.total_tokens ?? telemetry?.total_tokens ?? 0)}
+          value={formatNumber(telemetry?.total_tokens ?? 0)}
         />
       </div>
 

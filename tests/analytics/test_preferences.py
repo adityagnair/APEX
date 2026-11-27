@@ -159,7 +159,7 @@ def test_decline_does_not_wait_for_an_unreachable_analytics_server(preference_ap
         {"enabled": True, "email": "test@example.org"},
     ],
 )
-def test_preference_accepts_only_a_boolean_and_no_contest_details(preference_app, body):
+def test_preference_accepts_only_a_boolean(preference_app, body):
     app, path, cfg = preference_app
     original = path.read_text()
     response = TestClient(app).post("/v1/analytics/preference", json=body)

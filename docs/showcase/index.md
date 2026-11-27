@@ -28,14 +28,6 @@ These are stories from people who use apex day to day. Each entry shows the **re
 
     [:octicons-arrow-right-24: See it](persistent-memory.md)
 
-- :material-piggy-bank-outline:{ .lg .middle } **Track Your Savings**
-
-    ---
-
-    A leaderboard that tells you exactly how much you saved by running locally — and reminds you that none of your prompts ever left your house.
-
-    [:octicons-arrow-right-24: See it](cost-savings.md)
-
 - :material-message-text:{ .lg .middle } **Discord Companion**
 
     ---

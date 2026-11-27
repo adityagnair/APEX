@@ -266,16 +266,16 @@ class TestDataclassDefaults:
 
 
 # ---------------------------------------------------------------------------
-# Token-counting-version filter (leaderboard correctness)
+# Token-counting-version filter (aggregate correctness)
 # ---------------------------------------------------------------------------
 
 
 class TestMethodologyFilter:
     """When the aggregator is asked to honour the methodology version
-    (the leaderboard ingest path does), legacy rows that predate the
+    (the aggregated summary path does), legacy rows that predate the
     per-record version stamp must be excluded — they were the dominant
     source of the bimodal Wh/token distribution on the public
-    leaderboard. Local dashboard callers leave the flag off so they
+    summary. Local dashboard callers leave the flag off so they
     still see the full history."""
 
     def test_default_includes_legacy_rows(self, tmp_path: Path) -> None:
@@ -303,7 +303,7 @@ class TestMethodologyFilter:
         agg = _setup(tmp_path, [legacy, current])
         stats = agg.per_model_stats(current_methodology_only=True)
         assert len(stats) == 1
-        # Only the current-version row counts toward the leaderboard sum.
+        # Only the current-version row counts toward the aggregate sum.
         assert stats[0].call_count == 1
         agg.close()
 

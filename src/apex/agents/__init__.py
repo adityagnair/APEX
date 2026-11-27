@@ -20,6 +20,11 @@ except ImportError:
     pass
 
 try:
+    import apex.agents.system_admin  # noqa: F401
+except ImportError:
+    pass
+
+try:
     import apex.agents.orchestrator  # noqa: F401
 except ImportError:
     pass

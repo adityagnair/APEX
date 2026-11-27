@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS telemetry (
     std_itl_ms           REAL NOT NULL DEFAULT 0.0,
     is_streaming         INTEGER NOT NULL DEFAULT 0,
     -- token_counting_version: nullable on purpose. Records inserted by
-    -- pre-fix builds left this NULL; the leaderboard aggregator treats
-    -- NULL as legacy and excludes those rows from per-token efficiency
-    -- sums (so the bimodal-Wh/token leaderboard population disappears).
+    -- pre-fix builds left this NULL; the aggregator treats NULL as
+    -- legacy and excludes those rows from per-token efficiency sums
+    -- (so the bimodal-Wh/token population disappears).
     token_counting_version INTEGER,
     mining_session_id    TEXT,
     metadata        TEXT    NOT NULL DEFAULT '{}'

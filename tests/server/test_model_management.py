@@ -90,6 +90,27 @@ class TestModelPull:
             json={"name": "qwen3.5:4b", "stream": False},
         )
 
+    def test_pull_resolves_ollama_behind_multi_engine(self):
+        """Ollama plus another backend surfaces as MultiEngine, not "ollama"."""
+        from apex.engine.multi import MultiEngine
+
+        ollama = _make_ollama_engine()
+        cloud = _make_engine(engine_id="cloud")
+        multi = MultiEngine([("ollama", ollama), ("cloud", cloud)])
+        client = TestClient(_app(multi, engine_name="multi"))
+
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+
+        with patch("httpx.AsyncClient") as MockClient:
+            instance = MockClient.return_value.__aenter__.return_value
+            instance.post = AsyncMock(return_value=mock_resp)
+
+            resp = client.post("/v1/models/pull", json={"model": "qwen3.5:4b"})
+
+        assert resp.status_code == 200
+        assert resp.json()["model"] == "qwen3.5:4b"
+
     def test_pull_ollama_unreachable(self):
         engine = _make_ollama_engine()
         client = TestClient(_app(engine, engine_name="ollama"))
@@ -140,6 +161,26 @@ class TestModelDelete:
             "/api/delete",
             json={"name": "qwen3:0.6b"},
         )
+
+    def test_delete_resolves_ollama_behind_multi_engine(self):
+        from apex.engine.multi import MultiEngine
+
+        ollama = _make_ollama_engine()
+        cloud = _make_engine(engine_id="cloud")
+        multi = MultiEngine([("ollama", ollama), ("cloud", cloud)])
+        client = TestClient(_app(multi, engine_name="multi"))
+
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+
+        with patch("httpx.AsyncClient") as MockClient:
+            instance = MockClient.return_value.__aenter__.return_value
+            instance.request = AsyncMock(return_value=mock_resp)
+
+            resp = client.delete("/v1/models/qwen3:0.6b")
+
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "deleted"
 
 
 # ---------------------------------------------------------------------------

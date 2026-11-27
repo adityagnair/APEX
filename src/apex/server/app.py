@@ -20,9 +20,7 @@ from apex.server.analytics_routes import (
     router as analytics_router,
 )
 from apex.server.api_routes import include_all_routes
-from apex.server.comparison import comparison_router
 from apex.server.connectors_router import create_connectors_router
-from apex.server.dashboard import dashboard_router
 from apex.server.digest_routes import create_digest_router
 from apex.server.research_router import router as research_router
 from apex.server.routes import router
@@ -475,8 +473,6 @@ def create_app(
                     pass
 
     app.include_router(router)
-    app.include_router(dashboard_router)
-    app.include_router(comparison_router)
     app.include_router(create_connectors_router())
     app.include_router(create_digest_router())
     app.include_router(upload_router)

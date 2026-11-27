@@ -543,13 +543,13 @@ def _handle_direct(
         #     tokens only; no energy meter, no version stamp).
         #
         # The doubled count was the dominant driver of the bimodal
-        # Wh/token distribution on the public leaderboard.
+        # Wh/token distribution.
         #
         # The fix below is NOT "unwrap and call instrumented_generate":
         # that would have replaced "doubled records" with "every
         # request emits only a bare record with no energy / no version",
-        # which the leaderboard's `current_methodology_only=True` filter
-        # would then drop entirely. Instead, when the engine is already
+        # which the `current_methodology_only=True` filter would then
+        # drop entirely. Instead, when the engine is already
         # an InstrumentedEngine, skip the wrapper and call `generate`
         # directly — InstrumentedEngine publishes the full per-record
         # event itself with energy + version intact. Only fall back to
@@ -1216,6 +1216,35 @@ async def list_models(request: Request) -> ModelListResponse:
     )
 
 
+def _resolve_ollama_engine(engine: Any) -> Any | None:
+    """Return the Ollama backend behind wrapper / ``MultiEngine`` layers.
+
+    When more than one backend is configured (e.g. Ollama plus a cloud
+    engine) the server exposes a ``MultiEngine`` as ``app.state.engine``,
+    so a name check alone would reject model pulls even though Ollama is
+    available.
+    """
+    from apex.engine.multi import MultiEngine
+    from apex.security.guardrails import GuardrailsEngine
+    from apex.telemetry.instrumented_engine import InstrumentedEngine
+
+    current = engine
+    while current is not None:
+        if isinstance(current, InstrumentedEngine):
+            current = current._inner
+            continue
+        if isinstance(current, GuardrailsEngine):
+            current = current._engine
+            continue
+        if isinstance(current, MultiEngine):
+            for key, member in current._engines:
+                if key == "ollama" or getattr(member, "engine_id", "") == "ollama":
+                    return _resolve_ollama_engine(member) or member
+            return None
+        return current if getattr(current, "engine_id", "") == "ollama" else None
+    return None
+
+
 @router.post("/v1/models/pull")
 async def pull_model(request: Request):
     """Pull / download a model from the Ollama registry."""
@@ -1224,10 +1253,9 @@ async def pull_model(request: Request):
     if not model_name:
         raise HTTPException(status_code=400, detail="'model' field is required")
 
-    engine = request.app.state.engine
-    engine_name = getattr(request.app.state, "engine_name", "")
     # Only Ollama supports pulling
-    if engine_name != "ollama" and getattr(engine, "engine_id", "") != "ollama":
+    ollama = _resolve_ollama_engine(request.app.state.engine)
+    if ollama is None:
         raise HTTPException(
             status_code=501,
             detail="Model pulling is only supported with the Ollama engine",
@@ -1235,7 +1263,7 @@ async def pull_model(request: Request):
 
     import httpx as _httpx
 
-    host = getattr(engine, "_host", "http://localhost:11434")
+    host = getattr(ollama, "_host", "http://localhost:11434")
     try:
         async with _httpx.AsyncClient(base_url=host, timeout=600.0) as client:
             resp = await client.post(
@@ -1257,14 +1285,13 @@ async def pull_model(request: Request):
 @router.delete("/v1/models/{model_name:path}")
 async def delete_model(model_name: str, request: Request):
     """Delete a model from Ollama."""
-    engine = request.app.state.engine
-    engine_name = getattr(request.app.state, "engine_name", "")
-    if engine_name != "ollama" and getattr(engine, "engine_id", "") != "ollama":
+    ollama = _resolve_ollama_engine(request.app.state.engine)
+    if ollama is None:
         raise HTTPException(status_code=501, detail="Only supported with Ollama engine")
 
     import httpx as _httpx
 
-    host = getattr(engine, "_host", "http://localhost:11434")
+    host = getattr(ollama, "_host", "http://localhost:11434")
     try:
         async with _httpx.AsyncClient(base_url=host, timeout=30.0) as client:
             resp = await client.request(
@@ -1366,69 +1393,13 @@ async def reload_cloud_engine(request: Request):
     return {"status": "ok", "message": "Cloud engine reloaded"}
 
 
-@router.get("/v1/savings")
-async def savings(request: Request):
-    """Return savings summary compared to cloud providers.
-
-    Only includes telemetry from the current server session so that
-    counters start at zero each time a new model + agent is launched.
-    """
-    from apex.core.config import DEFAULT_CONFIG_DIR
-    from apex.server.savings import compute_savings, savings_to_dict
-    from apex.telemetry.aggregator import TelemetryAggregator
-
-    db_path = DEFAULT_CONFIG_DIR / "telemetry.db"
-    if not db_path.exists():
-        empty = compute_savings(0, 0, 0)
-        return savings_to_dict(empty)
-
-    session_start = getattr(request.app.state, "session_start", None)
-
-    agg = TelemetryAggregator(db_path)
-    try:
-        # current_methodology_only excludes pre-fix legacy rows from
-        # the leaderboard's per-token efficiency numerator/denominator
-        # — see the comment on _time_filter for the bimodal-Wh/token
-        # background.
-        summary = agg.summary(since=session_start, current_methodology_only=True)
-        # Exclude cloud model tokens from savings — only local
-        # inference counts toward cost savings.
-        _cloud_prefixes = (
-            "gpt-",
-            "o1-",
-            "o3-",
-            "o4-",
-            "claude-",
-            "gemini-",
-            "openrouter/",
-        )
-        local_models = [
-            m
-            for m in summary.per_model
-            if not any(m.model_id.startswith(p) for p in _cloud_prefixes)
-        ]
-        result = compute_savings(
-            prompt_tokens=sum(m.prompt_tokens for m in local_models),
-            completion_tokens=sum(m.completion_tokens for m in local_models),
-            total_calls=sum(m.call_count for m in local_models),
-            session_start=session_start if session_start else 0.0,
-            prompt_tokens_evaluated=sum(
-                m.prompt_tokens_evaluated for m in local_models
-            ),
-        )
-        return savings_to_dict(result)
-    finally:
-        agg.close()
-
-
 @router.post("/v1/telemetry/reset")
 async def reset_telemetry():
     """Clear all stored telemetry records.
 
     Useful after updating token-counting methodology — clears
     historical records that were computed under the old rules so
-    that the savings dashboard and leaderboard submissions start
-    fresh with corrected values.
+    that telemetry counters start fresh with corrected values.
     """
     from apex.core.config import DEFAULT_CONFIG_DIR
     from apex.telemetry.aggregator import TelemetryAggregator

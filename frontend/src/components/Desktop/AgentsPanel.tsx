@@ -108,6 +108,8 @@ const AVAILABLE_TOOLS = [
   { id: 'code_interpreter', label: 'Code Interpreter' },
   { id: 'file_read', label: 'File Read' },
   { id: 'shell_exec', label: 'Shell Exec' },
+  { id: 'file_manager', label: 'File Manager' },
+  { id: 'system_devices', label: 'Devices & Printers' },
   { id: 'browser', label: 'Browser' },
   { id: 'calculator', label: 'Calculator' },
 ];

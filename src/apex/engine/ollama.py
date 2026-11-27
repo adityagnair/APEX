@@ -207,9 +207,9 @@ class OllamaEngine(AsyncHTTPEngineMixin, InferenceEngine):
             ) from exc
         data = resp.json()
         # prompt_eval_count = tokens actually evaluated (KV-cache-aware).
-        # estimate_prompt_tokens = full prompt size (for cost comparison).
+        # estimate_prompt_tokens = full prompt size.
         # We report both so downstream can use the right one:
-        #   prompt_tokens        → full size (what cloud would charge)
+        #   prompt_tokens        → full prompt size
         #   prompt_tokens_evaluated → actual compute (with KV cache)
         reported_prompt = data.get("prompt_eval_count", 0)
         estimated_prompt = estimate_prompt_tokens(messages)

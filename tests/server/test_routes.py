@@ -484,16 +484,16 @@ class TestChatCompletions:
         assert data["choices"][0]["message"]["content"] == "Hello from agent"
 
     def test_instrumented_engine_unwrapped_to_avoid_dual_telemetry(self):
-        """Regression for the leaderboard wonky-values bug.
+        """Regression for the telemetry double-counting bug.
 
         When `app.state.engine` is already an `InstrumentedEngine` (which is
         the common case when the server was constructed with telemetry
         wired in), `_handle_direct` MUST NOT wrap it again with
         `instrumented_generate`. Both layers publish `TELEMETRY_RECORD`
         events, so wrapping twice would double-count every call into the
-        leaderboard pipeline and inflate per-token energy / FLOPs metrics
-        by 2× on every request — the dominant contributor to the bimodal
-        Wh/token distribution on the public leaderboard.
+        telemetry pipeline and inflate per-token energy / FLOPs metrics by
+        2× on every request — the dominant contributor to the bimodal
+        Wh/token distribution.
 
         The fix unwraps the engine via `engine._inner` before passing it
         to `instrumented_generate`. This test pins that contract.
@@ -532,23 +532,23 @@ class TestChatCompletions:
             f"(got {len(received_records)}). When `app.state.engine` is "
             f"already an InstrumentedEngine, routes.py must not also fire "
             f"`instrumented_generate` — both layers publish and double "
-            f"the leaderboard's per-request counts."
+            f"the telemetry per-request counts."
         )
 
         # And the surviving record must be the InstrumentedEngine's
         # FULL record (with token_counting_version stamped, ready for
-        # the leaderboard's current_methodology_only=True filter).
+        # the current_methodology_only=True filter).
         # If routes.py had instead unwrapped engine._inner and routed
         # through the lightweight `instrumented_generate`, the record
         # would carry no version stamp and `current_methodology_only`
-        # would drop it from leaderboard sums entirely. Pin that
+        # would drop it from aggregate sums entirely. Pin that
         # contract — see the adversarial review on PR #498.
         from apex.core.types import TOKEN_COUNTING_VERSION
 
         rec = received_records[0].data["record"]
         assert rec.token_counting_version == TOKEN_COUNTING_VERSION, (
             "InstrumentedEngine path must stamp the methodology version "
-            "so the leaderboard's current-methodology filter accepts the "
+            "so the current-methodology filter accepts the "
             "record."
         )
 

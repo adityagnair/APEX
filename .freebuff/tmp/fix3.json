@@ -1,0 +1,5 @@
+{
+  "content": "def merge_intervals(intervals):\n    \"\"\"Merges overlapping intervals and returns them sorted.\"\"\"\n    if not intervals:\n        return []\n    \n    intervals.sort(key=lambda x: x[0])\n    merged = [intervals[0]]\n    for start, end in intervals[1:]:\n        last_end = merged[-1][1]\n        if start <= last_end:\n            merged[-1][1] = max(last_end, end)\n        else:\n            merged.append([start, end])\n    \n    return [tuple(interval) for interval in merged]",
+  "turns": 1,
+  "tool_results": []
+}

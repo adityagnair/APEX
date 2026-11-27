@@ -419,8 +419,8 @@ function SelfHostedView() {
           </p>
           <CodeBlock code={"git clone https://github.com/apex/apex.git\ncd apex\nuv sync --extra desktop\napex serve --port 8000"} />
           <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-            The chat, dashboard, energy profiling, and cost comparison all run
-            locally on your machine.
+            The chat, dashboard, and energy profiling all run locally on your
+            machine.
           </p>
         </Section>
 

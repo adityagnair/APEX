@@ -6,7 +6,6 @@ This directory holds the hero screenshot for each Showcase entry in `docs/showca
 |---|---|
 | `docs/showcase/morning-brief.md` | `morning-brief.png` |
 | `docs/showcase/persistent-memory.md` | `persistent-memory.png` |
-| `docs/showcase/cost-savings.md` | `cost-savings.png` |
 | `docs/showcase/discord-companion.md` | `discord-companion.png` |
 | `docs/showcase/coding-assistant.md` | `coding-assistant.png` |
 
@@ -31,7 +30,6 @@ This directory holds the hero screenshot for each Showcase entry in `docs/showca
 
 - Model names ("llama3.1:8b", "qwen2.5:14b") — they're informative
 - Timestamps — proves the screenshot is recent
-- Dollar amounts on the leaderboard — the whole point
 - Emoji reactions, your own first name, your own avatar
 
 ## Placeholder PNGs

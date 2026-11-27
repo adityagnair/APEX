@@ -164,27 +164,6 @@ export interface ModelInfo {
   owned_by: string;
 }
 
-export interface ProviderSavings {
-  provider: string;
-  label: string;
-  input_cost: number;
-  output_cost: number;
-  total_cost: number;
-  energy_wh: number;
-  energy_joules: number;
-  flops: number;
-}
-
-export interface SavingsData {
-  total_calls: number;
-  total_prompt_tokens: number;
-  total_completion_tokens: number;
-  total_tokens: number;
-  local_cost: number;
-  per_provider: ProviderSavings[];
-  token_counting_version?: number;
-}
-
 export interface ServerInfo {
   model: string;
   agent: string | null;

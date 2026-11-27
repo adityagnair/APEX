@@ -3,7 +3,7 @@ import { Send, Square, Paperclip, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppStore, generateId } from '../../lib/store';
 import { streamChat, streamResearch } from '../../lib/sse';
-import { fetchSavings, getBase, authHeaders } from '../../lib/api';
+import { getBase, authHeaders } from '../../lib/api';
 import { listConnectors, getSyncStatus } from '../../lib/connectors-api';
 import { serializeToolCallArguments } from '../../lib/tool-call';
 import {
@@ -359,11 +359,6 @@ export function InputArea() {
                   (ev.usage.prompt_tokens ?? 0) +
                     (ev.usage.completion_tokens ?? 0),
               };
-              // Optimistically roll this research turn into the session
-              // counters so the Session panel updates the moment the
-              // stream finishes, regardless of how /v1/savings aggregates
-              // research telemetry server-side.
-              useAppStore.getState().incrementSavings(usage);
             }
             // Hold the final live numbers visible for a beat so the panel
             // doesn't flash to 0 between the SSE close and the next
@@ -529,15 +524,6 @@ export function InputArea() {
       });
       abortRef.current = null;
 
-      // Research path updates session counters optimistically from the
-      // `done` event's usage payload — re-fetching here would overwrite
-      // it with a potentially stale snapshot if the server's research
-      // telemetry hasn't been merged into /v1/savings yet.
-      if (!deepResearch) {
-        fetchSavings()
-          .then((data) => useAppStore.getState().setSavings(data))
-          .catch(() => {});
-      }
     }
   }, [
     input,

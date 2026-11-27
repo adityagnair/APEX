@@ -8,7 +8,6 @@ import type {
   MessageTelemetry,
   ResearchSearchTrace,
   ResearchSource,
-  SavingsData,
   ServerInfo,
   StreamState,
   ToolCallInfo,
@@ -36,11 +35,6 @@ export interface AgentEvent {
 
 const CONVERSATIONS_KEY = 'apex-conversations';
 const SETTINGS_KEY = 'apex-settings';
-const OPTIN_KEY = 'apex-optin';
-const OPTIN_NAME_KEY = 'apex-display-name';
-const OPTIN_EMAIL_KEY = 'apex-email';
-const OPTIN_ANONID_KEY = 'apex-anon-id';
-const OPTIN_SEEN_KEY = 'apex-optin-seen';
 
 interface ConversationStore {
   version: 1;
@@ -163,7 +157,6 @@ interface AppState {
   modelsLoading: boolean;
   selectedModel: string;
   serverInfo: ServerInfo | null;
-  savings: SavingsData | null;
 
   // Settings
   settings: Settings;
@@ -176,14 +169,6 @@ interface AppState {
 
   // System panel
   systemPanelOpen: boolean;
-
-  // Opt-in sharing
-  optInEnabled: boolean;
-  optInDisplayName: string;
-  optInEmail: string;
-  optInAnonId: string;
-  optInModalSeen: boolean;
-  optInModalOpen: boolean;
 
   // Actions: conversations
   loadConversations: () => void;
@@ -215,8 +200,6 @@ interface AppState {
   setModelsLoading: (loading: boolean) => void;
   setSelectedModel: (model: string) => void;
   setServerInfo: (info: ServerInfo | null) => void;
-  setSavings: (data: SavingsData | null) => void;
-  incrementSavings: (usage: TokenUsage) => void;
 
   // Live GPU metrics — streamed from /api/research system_metrics events.
   // When non-null, the System panel renders this instead of polled values
@@ -253,11 +236,6 @@ interface AppState {
   addAgentEvent: (event: AgentEvent) => void;
   clearAgentEvents: () => void;
 
-  // Actions: opt-in sharing
-  setOptIn: (enabled: boolean, displayName: string, email: string) => void;
-  setOptInModalOpen: (open: boolean) => void;
-  markOptInModalSeen: () => void;
-
   // Logs
   logEntries: LogEntry[];
   addLogEntry: (entry: LogEntry) => void;
@@ -287,20 +265,12 @@ export const useAppStore = create<AppState>((set, get) => {
     modelsLoading: true,
     selectedModel: '',
     serverInfo: null,
-    savings: null,
 
     settings: loadSettings(),
 
     commandPaletteOpen: false,
     sidebarOpen: true,
     systemPanelOpen: true,
-
-    optInEnabled: localStorage.getItem(OPTIN_KEY) === 'true',
-    optInDisplayName: localStorage.getItem(OPTIN_NAME_KEY) || '',
-    optInEmail: localStorage.getItem(OPTIN_EMAIL_KEY) || '',
-    optInAnonId: localStorage.getItem(OPTIN_ANONID_KEY) || crypto.randomUUID(),
-    optInModalSeen: localStorage.getItem(OPTIN_SEEN_KEY) === 'true',
-    optInModalOpen: false,
 
     // ── Conversations ───────────────────────────────────────────────
 
@@ -518,24 +488,6 @@ export const useAppStore = create<AppState>((set, get) => {
     setModelsLoading: (loading: boolean) => set({ modelsLoading: loading }),
     setSelectedModel: (model: string) => set({ selectedModel: model }),
     setServerInfo: (info: ServerInfo | null) => set({ serverInfo: info }),
-    setSavings: (data: SavingsData | null) => set({ savings: data }),
-    incrementSavings: (usage: TokenUsage) => {
-      const cur = get().savings;
-      const prompt = usage.prompt_tokens ?? 0;
-      const completion = usage.completion_tokens ?? 0;
-      const total = usage.total_tokens ?? prompt + completion;
-      set({
-        savings: {
-          total_calls: (cur?.total_calls ?? 0) + 1,
-          total_prompt_tokens: (cur?.total_prompt_tokens ?? 0) + prompt,
-          total_completion_tokens: (cur?.total_completion_tokens ?? 0) + completion,
-          total_tokens: (cur?.total_tokens ?? 0) + total,
-          local_cost: cur?.local_cost ?? 0,
-          per_provider: cur?.per_provider ?? [],
-          token_counting_version: cur?.token_counting_version,
-        },
-      });
-    },
 
     liveEnergy: null,
     setLiveEnergy: (data: LiveEnergyMetrics | null) => set({ liveEnergy: data }),
@@ -586,21 +538,6 @@ export const useAppStore = create<AppState>((set, get) => {
     modelLoading: false,
     setModelLoading: (loading) => set({ modelLoading: loading }),
 
-    // ── Opt-in sharing ──────────────────────────────────────────────
-
-    setOptIn: (enabled: boolean, displayName: string, email: string) => {
-      const anonId = get().optInAnonId;
-      localStorage.setItem(OPTIN_KEY, String(enabled));
-      localStorage.setItem(OPTIN_NAME_KEY, displayName);
-      localStorage.setItem(OPTIN_EMAIL_KEY, email);
-      localStorage.setItem(OPTIN_ANONID_KEY, anonId);
-      set({ optInEnabled: enabled, optInDisplayName: displayName, optInEmail: email });
-    },
-    setOptInModalOpen: (open: boolean) => set({ optInModalOpen: open }),
-    markOptInModalSeen: () => {
-      localStorage.setItem(OPTIN_SEEN_KEY, 'true');
-      set({ optInModalSeen: true });
-    },
   };
 });
 

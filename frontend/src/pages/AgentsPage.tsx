@@ -3422,7 +3422,6 @@ export function AgentsPage() {
   const setManagedAgents = useAppStore((s) => s.setManagedAgents);
   const selectedAgentId = useAppStore((s) => s.selectedAgentId);
   const setSelectedAgentId = useAppStore((s) => s.setSelectedAgentId);
-  const savings = useAppStore((s) => s.savings);
   const [loading, setLoading] = useState(true);
   const [agentManagerAvailable, setAgentManagerAvailable] = useState<boolean | null>(null);
   const [tasks, setTasks] = useState<AgentTask[]>([]);
@@ -3731,7 +3730,7 @@ export function AgentsPage() {
               </div>
             )}
 
-            {/* Usage stats + savings — single compact row */}
+            {/* Usage stats — single compact row */}
             {(() => {
               const inTok = selectedAgent.input_tokens ?? 0;
               const outTok = selectedAgent.output_tokens ?? 0;
@@ -3739,11 +3738,6 @@ export function AgentsPage() {
               const paramMatch = modelName.match(/:(\d+(?:\.\d+)?)b/i);
               const paramsB = paramMatch ? parseFloat(paramMatch[1]) : 9;
               const flops = 2 * paramsB * 1e9 * (inTok + outTok);
-              const providers = [
-                { label: 'GPT-5.6 Sol', inPer1M: 5.0, outPer1M: 30.0 },
-                { label: 'Claude Fable 5', inPer1M: 10.0, outPer1M: 50.0 },
-                { label: 'Gemini 3.1 Pro', inPer1M: 2.0, outPer1M: 12.0 },
-              ];
               const energyWh = (inTok + outTok) / 1000 * 0.4;
               const energyKj = energyWh * 3.6;
               const fmtFlops = flops >= 1e15 ? `${(flops / 1e15).toFixed(1)} PFLOPs` : `${(flops / 1e12).toFixed(1)} TFLOPs`;
@@ -3784,22 +3778,6 @@ export function AgentsPage() {
                             <p className="text-xl font-bold leading-none" style={{ color: 'var(--color-success)' }}>{energyKj.toFixed(2)} kJ</p>
                             <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>Energy</p>
                           </div>
-                        </div>
-                      </div>
-                      <div style={{ width: 1, background: 'var(--color-border)' }} />
-                      {/* Dollars Saved */}
-                      <div className="pl-5">
-                        <p style={sectionTitle}>Dollars Saved vs.</p>
-                        <div className="flex gap-5">
-                          {providers.map((p) => {
-                            const cost = (inTok / 1e6) * p.inPer1M + (outTok / 1e6) * p.outPer1M;
-                            return (
-                              <div key={p.label}>
-                                <p className="text-xl font-bold leading-none" style={{ color: 'var(--color-success)' }}>${cost.toFixed(4)}</p>
-                                <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>{p.label}</p>
-                              </div>
-                            );
-                          })}
                         </div>
                       </div>
                     </>)}

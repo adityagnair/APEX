@@ -18,6 +18,8 @@ _BUILTIN_TOOL_MODULES = (
     "retrieval",
     "llm_tool",
     "file_read",
+    "file_manager",
+    "system_devices",
     "web_search",
     "weather",
     "fx_macro",

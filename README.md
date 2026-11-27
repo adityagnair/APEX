@@ -8,7 +8,7 @@
 
 APEX is a modular AI assistant backend that acts as an executive layer between you and your digital environment. It runs locally on your machine, keeps your data private, and connects to any tool or service through the open **Model Context Protocol (MCP)** standard.
 
-Unlike passive chatbots, APEX is an autonomous operator — it decomposes high-level objectives, delegates tasks to specialised sub-agents, manages execution sandboxes, and synthesises results into coherent outputs.
+APEX is an autonomous operator — it decomposes high-level objectives, delegates tasks to specialised sub-agents, manages execution sandboxes, and synthesises results into coherent outputs.
 
 ---
 

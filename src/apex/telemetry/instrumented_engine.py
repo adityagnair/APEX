@@ -251,9 +251,9 @@ class InstrumentedEngine(InferenceEngine):
             energy_basis=energy_basis,
             tokens_per_joule=tokens_per_joule,
             # Stamp every new record with the current methodology version
-            # so the leaderboard aggregator can drop legacy rows (those
-            # left NULL by pre-fix builds) cleanly. Source of truth for
-            # the integer is `server/savings.py`.
+            # so the aggregator can drop legacy rows (those left NULL by
+            # pre-fix builds) cleanly. Source of truth for the integer is
+            # `apex.core.types`.
             token_counting_version=TOKEN_COUNTING_VERSION,
         )
 

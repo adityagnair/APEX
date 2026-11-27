@@ -1,0 +1,5 @@
+{
+  "content": "```python\ndef merge_intervals(intervals):\n    \"\"\"\n    Merges overlapping intervals and returns them sorted.\n\n    :param intervals: A list of tuples, where each tuple represents a [start, end] interval.\n    :return: A list of merged and sorted intervals.\n    \"\"\"\n    # Sort intervals by their start times\n    intervals.sort(key=lambda x: x[0])\n\n    # Initialize the merged list with the first interval\n    merged = [intervals[0]]\n\n    # Iterate through the remaining intervals\n    for start, end in intervals[1:]:\n        last_end = merged[-1][1]\n        \n        # If the current interval overlaps with the last merged interval\n        if start <= last_end:\n            # Merge by updating the end of the last merged interval\n            merged[-1][1] = max(last_end, end)\n        else:\n            # If not overlapping, add the current interval to the merged list\n            merged.append([start, end])\n\n    return merged\n```",
+  "turns": 1,
+  "tool_results": []
+}

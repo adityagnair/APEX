@@ -120,11 +120,11 @@ class TelemetryAggregator:
 
         ``current_methodology_only`` is opt-in (default False) because the
         local dashboard still wants to render historical aggregates that
-        predate the per-record version stamp. The leaderboard ingest path
-        in ``server/routes.savings`` flips it to True so legacy rows (the
-        ones with NULL token_counting_version) don't pollute the public
-        per-token efficiency metric — they were the dominant source of
-        the bimodal Wh/token distribution.
+        predate the per-record version stamp. The aggregated summary path
+        flips it to True so legacy rows (the ones with NULL
+        token_counting_version) don't pollute the per-token efficiency
+        metric — they were the dominant source of the bimodal Wh/token
+        distribution.
         """
         clauses: list[str] = []
         params: list[Any] = []

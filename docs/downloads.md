@@ -62,7 +62,7 @@ The desktop app provides:
 
 - **Full chat UI** — same interface as the browser app, in a native window
 - **Energy monitoring** — real-time power consumption tracking
-- **Telemetry dashboard** — token throughput, latency, and cost comparison vs. cloud models
+- **Telemetry dashboard** — token throughput and latency
 - **System tray** — quick access without keeping a terminal open
 
 The backend (Ollama, Python API server, inference) runs separately on your machine.
@@ -141,7 +141,7 @@ Then open [http://localhost:5173](http://localhost:5173).
 
 - **Chat interface** — markdown rendering, streaming responses, conversation history
 - **Tool use** — calculator, web search, code interpreter, file I/O
-- **System panel** — live telemetry, energy monitoring, cost comparison vs. cloud models
+- **System panel** — live telemetry and energy monitoring
 - **Dashboard** — energy graphs, trace debugging, cost breakdown
 - **Settings** — model selection, agent configuration, theme toggle
 

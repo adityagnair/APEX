@@ -1,0 +1,5 @@
+{
+  "content": "```python\ndef process_data(data):\n    def process_tuple(t):\n        if isinstance(t, tuple):\n            return tuple(process_data(item) if isinstance(item, (list, tuple)) else item for item in t)\n        return t\n\n    def process_list(l):\n        return [process_data(item) for item in l if isinstance(item, (list, tuple))]\n\n    if not data:\n        return []\n\n    if isinstance(data, (list, tuple)):\n        if isinstance(data[0], (list, tuple)):\n            return process_tuple(data)\n        else:\n            return process_list(data)\n    else:\n        return process_data(data)\n```",
+  "turns": 1,
+  "tool_results": []
+}

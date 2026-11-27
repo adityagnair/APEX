@@ -15,7 +15,8 @@ Agents are the agentic logic layer of apex. They determine how a query is proces
 | `ClaudeCodeAgent`   | `claude_code`     | No              | Yes        | Claude Agent SDK via Node.js subprocess       |
 | `OpenCodeAgent`     | `opencode`        | No              | Yes        | [opencode](https://opencode.ai) coding agent on your local engine |
 | `OperativeAgent`    | `operative`       | Yes             | Yes        | Persistent scheduled agent with state management |
-| `MonitorOperativeAgent` | `monitor_operative` | Yes        | Yes        | Long-horizon agent with 4 configurable strategy axes |
+| `MonitorOperativeAgent` | `monitor_operative` | Yes         | Yes        | Long-horizon agent with 4 configurable strategy axes |
+| `SystemAdminAgent`  | `system_admin`    | Yes             | Yes        | Files and devices on the host (file manager, printers, Bluetooth, USB) |
 
 ---
 
@@ -650,6 +651,32 @@ result = agent.run("Investigate the root cause of the production outage")
 # Via CLI
 APEX ask --agent monitor_operative "Analyze the security audit findings"
 ```
+
+---
+
+## SystemAdminAgent
+
+The `SystemAdminAgent` manages the computer it runs on instead of a code repository. It extends `ToolUsingAgent` and runs the standard function-calling loop over a small, focused toolkit:
+
+| Tool | What it does |
+|------|--------------|
+| `file_manager` | `roots`, `list`, `find` (name/size/date filters), `info`, `du`, `mkdir`, `copy`, `move`, `delete` (needs `confirm=true`), `open` |
+| `system_devices` | `summary`, `printers`, `print_jobs`, `bluetooth`, `usb`, `audio`, `network`, `disks`, `displays`, `battery` |
+| `file_read` | Read a text file |
+| `think` | Reason without side effects |
+
+When no `tools=` are supplied the agent instantiates those four itself. It defaults to `temperature=0.2` and `max_turns=12`, and its system prompt tells it to inspect before acting, never touch credential files, and confirm permanent deletions.
+
+`system_devices` shells out to read-only inspection commands: PowerShell (`Get-Printer`, `Get-PnpDevice`, `Get-NetAdapter`, `Get-CimInstance`) on Windows, `system_profiler`/`lpstat`/`pmset` on macOS, and `lpstat`/`bluetoothctl`/`lsusb`/`ip`/`df` on Linux. It reports what exists; it never changes device state.
+
+`file_manager` honours `[security] allowed_dirs` and the sensitive-file policy for every action, and destructive or overwriting operations require explicit parameters (`confirm=true`, `recursive=true`, `overwrite=true`).
+
+```bash
+APEX ask --agent system_admin "Which printers are connected and is anything queued?"
+APEX ask --agent system_admin "Find every PDF modified this week under my Documents"
+```
+
+A matching **System Manager** template ships in the agent launcher (`agent_type = "system_admin"`), so the same agent can be created from the GUI or with `APEX agents create --template system_admin`.
 
 ---
 

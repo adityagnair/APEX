@@ -1,11 +1,6 @@
-import type { ModelInfo, SavingsData, ServerInfo } from '../types';
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from './supabase';
+import type { ModelInfo, ServerInfo } from '../types';
 import { serializeToolCallArguments } from './tool-call';
 import { timeZoneHeaders } from './timezone';
-
-// ---------------------------------------------------------------------------
-// Supabase config
-// ---------------------------------------------------------------------------
 
 declare global {
   interface Window {
@@ -110,7 +105,7 @@ export const authHeaders = (
 // Bearer auth header (when a key is set) on every call. Using this everywhere
 // guarantees no /v1 or /api request is sent without auth — the bug in #266 was
 // that direct fetch() calls omitted the header and 401'd. `path` is the
-// server-relative path (e.g. "/v1/savings").
+// server-relative path (e.g. "/v1/info").
 export const apiFetch = (
   path: string,
   init: RequestInit = {},
@@ -262,12 +257,6 @@ export async function preloadModel(modelName: string, owner?: string): Promise<v
     if (e.name === 'TimeoutError') throw new Error('Model load timed out (120s)');
     throw e;
   }
-}
-
-export async function fetchSavings(): Promise<SavingsData> {
-  const res = await apiFetch(`/v1/savings`);
-  if (!res.ok) throw new Error(`Failed to fetch savings: ${res.status}`);
-  return res.json();
 }
 
 export async function fetchServerInfo(): Promise<ServerInfo> {
@@ -1011,44 +1000,6 @@ export async function fetchAgentTrace(agentId: string, traceId: string): Promise
   const res = await apiFetch(`/v1/managed-agents/${agentId}/traces/${traceId}`);
   if (!res.ok) throw new Error(`Failed: ${res.status}`);
   return res.json();
-}
-
-// ---------------------------------------------------------------------------
-// Leaderboard savings submission (Supabase)
-// ---------------------------------------------------------------------------
-
-export interface SavingsSubmission {
-  anon_id: string;
-  display_name: string;
-  email: string;
-  total_calls: number;
-  total_tokens: number;
-  dollar_savings: number;
-  energy_wh_saved: number;
-  flops_saved: number;
-  token_counting_version?: number;
-}
-
-export async function submitSavings(data: SavingsSubmission): Promise<boolean> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/savings_entries?on_conflict=anon_id`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          Prefer: 'resolution=merge-duplicates',
-        },
-        body: JSON.stringify(data),
-      },
-    );
-    return res.ok || res.status === 201 || res.status === 200;
-  } catch {
-    return false;
-  }
 }
 
 // ---------------------------------------------------------------------------
